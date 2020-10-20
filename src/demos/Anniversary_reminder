@@ -1,0 +1,154 @@
+#!/bin/bash
+
+#for anniversary reminder
+
+mysql_name=reminder
+mysql_pass=reminder
+mysql_host=127.0.0.1
+mysql_base=Anniversary_reminder
+
+mysqlcon="mysql -u${mysql_name} -p${mysql_pass} -h${mysql_host} -D${mysql_base}"
+mysqlcon_N="mysql -u${mysql_name} -p${mysql_pass} -h${mysql_host} -D${mysql_base} -N"
+
+function print_parameter () {
+    echo ''
+    echo ''
+    echo -e "\e[1;34m1. 查询记录\e[0m"
+    echo -e "\e[1;34m2. 修改记录\e[0m"
+    echo -e "\e[1;34m3. 删除记录\e[0m"
+    echo -e "\e[1;34m4. 添加记录\e[0m"
+    echo -e "\e[1;34m0. 退出程序\e[0m"
+    echo -e "\e[1;34m-----------\e[0m"
+
+}
+
+function select_sql () {
+    echo '1. 阳历纪念日'
+    echo '2. 阴历纪念日'
+    echo '3. 所有纪念日(默认)'
+    read select_num
+    echo ''
+    case $select_num in
+        1)
+        echo "select stopdate,note from  yangli" | $mysqlcon_N;;
+        2)
+        echo "select stopdate,note from  yinli" | $mysqlcon_N;;
+        *)
+        echo "select date,note from  reminder" | $mysqlcon_N;;
+    esac
+
+    print_parameter
+}
+
+function update_opr () {
+    echo "修改日期（输入日期/n)"
+    read date_num
+    echo ''
+    if [[ ${date_num} != n ]]; then
+        echo 'UPDATE reminder SET `date`='${date_num}' WHERE (id='${1}');' | $mysqlcon
+    fi
+    echo "修改名称（输入名称/n)"
+    read note_num
+    echo ''
+    if [[ ${note_num} != n ]]; then
+        echo 'UPDATE reminder SET `note`='\"${note_num}\"' WHERE (id='${1}');' | $mysqlcon
+    fi
+    echo "修改提醒参数（输入参数/n)"
+    read alert_num
+    echo ''
+    if [[ ${alert_num} != n ]]; then
+        echo 'UPDATE reminder SET `alert`='${alert_num}' WHERE (id='${1}');' | $mysqlcon
+    fi
+    echo "修改阴阳历（0.阳历/1.阴历/n)"
+    read yinli_num
+    echo ''
+    if [[ ${yinli_num} != n ]]; then
+        echo 'UPDATE reminder SET `yinli`='${yinli_num}' WHERE (id='${1}');' | $mysqlcon
+    fi
+    echo "修改完成，现在记录如下："
+    echo "select * from  reminder where id = ${1}" | $mysqlcon_N
+}
+
+function update_sql () {
+    echo "select * from  reminder" | $mysqlcon_N
+    echo '想要修改哪条记录？请输入序号'
+    read update_num
+    echo ''
+    echo "select * from  reminder where id = ${update_num}" | $mysqlcon | grep ^id
+    if [[ $? != 0 ]]; then
+        echo "没有这个序号"
+    else
+        update_opr ${update_num}
+    fi
+
+    print_parameter
+}
+
+function delete_sql () {
+    echo "select * from  reminder" | $mysqlcon_N
+    echo '想要删除哪条记录？请输入序号'
+    read delete_num
+    echo ''
+    echo "select * from  reminder where id = ${delete_num}" | $mysqlcon | grep ^id
+    if [[ $? != 0 ]]; then
+        echo "没有这个序号"
+    else
+        echo "delete from reminder where id = ${delete_num}" | $mysqlcon
+        echo "删除完成"
+    fi
+
+    print_parameter
+}
+
+function insert_sql () {
+    echo "请输入日期(YYYY-mm-dd)："
+    read date_str
+    echo ''
+    echo "请输入名称："
+    read note_str
+    echo ''
+    echo "请输入提醒参数："
+    read alert_str
+    echo ''
+    echo "阳历阴历（0.阳历/1.阴历)"
+    read yinli_str
+    echo ''
+
+#    echo "日期=${date_str},名称=${note_str},提醒参数=${alert_str},阴历=${yinli_str} ? (y/n)"
+#    read insert_num
+#    echo ''
+#    if [[ ${insert_num} =y ]]; then
+    echo 'INSERT INTO reminder (date, note, alert, yinli) VALUES ('\"${date_str}\"', '\"${note_str}\"', '${alert_str}', '${yinli_str}');' | $mysqlcon_N
+    echo "添加完成，记录如下："
+    echo 'select * from  reminder where date='${date_str}' and note='\"${note_str}\"' and alert='${alert_str}' and yinli='${yinli_str}'; ' | $mysqlcon_N
+#    else
+#        echo 'please rechoose.'
+#    fi
+
+    print_parameter
+}
+
+function main () {
+    print_parameter
+    while :
+    do
+        read operation
+        echo ''
+        case $operation in
+            1)
+            select_sql;;
+            2)
+            update_sql;;
+            3)
+            delete_sql;;
+            4)
+            insert_sql;;
+            0)
+            break && exit;;
+            *)
+            print_parameter;;
+        esac
+    done
+}
+main
+

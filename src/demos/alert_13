@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#for anniversary reminder
+
+mysql_name=reminder
+mysql_pass=reminder
+mysql_host=127.0.0.1
+mysql_base=Anniversary_reminder
+
+mysqlcon="mysql -u${mysql_name} -p${mysql_pass} -h${mysql_host} -D${mysql_base} -N"
+
+yanglidate=`date +%m%d`
+yinlidate=`date +%F |  date_sw | sed 's/^.*Y//g'|sed 's/M//g' |sed 's/D//g'`
+
+echo "select note,stopdate from yangli WHERE startdate <= ${yanglidate} and stopdate >= ${yanglidate}" | ${mysqlcon} | while read note
+do
+    /usr/local/yxrh_fsnotify/sbin/yxrh_sendmail  -c "${note}" -i 1000011 -p wwe6753c349e5a217a -s hcCk5jl1jHJwEy4nd7yadpTVk5LeVHsqNVEztrszqLc
+done
+
+echo "select note,stopdate from yinli WHERE startdate <= ${yinlidate} and stopdate >= ${yinlidate}" | ${mysqlcon} | while read note2
+do
+    /usr/local/yxrh_fsnotify/sbin/yxrh_sendmail  -c "${note2}" -i 1000011 -p wwe6753c349e5a217a -s hcCk5jl1jHJwEy4nd7yadpTVk5LeVHsqNVEztrszqLc
+done
+
