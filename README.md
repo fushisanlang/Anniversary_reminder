@@ -11,20 +11,20 @@
 在ubuntu20.04LTS上，基于go1.15开发。数据库使用mysql5.5。
 
 ### 项目文件说明
-src 源码目录
-    * Anniversary_reminder.go 项目主文件
-    * until 工具包目录
-        * Alert.go 定时任务功能功能
-        * DataBase.go 数据库相关功能
-        * DateSwitch.go 日期转换功能
-        * ReadConf.go 读取配置文件功能
-        * SendWx.go 微信推送功能
-bin 编译产物路径
-    * linux_64 64位linux环境
-        * Anniversary_reminder 编译产物
-    * macos_64 64位mac环境
-    *注：理论上mac可用，但是未进行实际测试*
-        * Anniversary_reminder 编译产物
+src 源码目录 
+    * Anniversary_reminder.go 项目主文件 
+    * until 工具包目录 
+        * Alert.go 定时任务功能功能 
+        * DataBase.go 数据库相关功能 
+        * DateSwitch.go 日期转换功能 
+        * ReadConf.go 读取配置文件功能 
+        * SendWx.go 微信推送功能 
+bin 编译产物路径 
+    * linux_64 64位linux环境 
+        * Anniversary_reminder 编译产物 
+    * macos_64 64位mac环境 
+    *注：理论上mac可用，但是未进行实际测试* 
+        * Anniversary_reminder 编译产物 
 sql 初始化sql
      sql文件
 conf.ini 配置文件
